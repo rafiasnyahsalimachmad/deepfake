@@ -35,7 +35,7 @@ html, body, [class*="css"] {
     color: white;
 }
 
-/* HIDE STREAMLIT STYLE */
+/* HIDE STREAMLIT */
 #MainMenu {
     visibility: hidden;
 }
@@ -59,7 +59,7 @@ header {
 }
 
 .main-title {
-    font-size: 54px;
+    font-size: 52px;
     font-weight: 700;
     background: linear-gradient(
         to right,
@@ -69,12 +69,12 @@ header {
     );
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    margin-bottom: 8px;
 }
 
 .sub-title {
     color: #CBD5E1;
     font-size: 18px;
+    margin-top: 8px;
 }
 
 /* CARD */
@@ -89,7 +89,7 @@ header {
 /* BUTTON */
 .stButton > button {
     width: 100%;
-    height: 56px;
+    height: 58px;
     border-radius: 18px;
     border: none;
     background: linear-gradient(
@@ -100,11 +100,6 @@ header {
     color: white;
     font-size: 17px;
     font-weight: 600;
-    transition: 0.3s ease;
-}
-
-.stButton > button:hover {
-    transform: scale(1.01);
 }
 
 /* RESULT BOX */
@@ -117,9 +112,8 @@ header {
     padding: 26px;
     border-radius: 24px;
     text-align: center;
+    margin-top: 20px;
     color: white;
-    border: 1px solid rgba(255,255,255,0.1);
-    margin-top: 15px;
 }
 
 .fake-box {
@@ -131,9 +125,8 @@ header {
     padding: 26px;
     border-radius: 24px;
     text-align: center;
+    margin-top: 20px;
     color: white;
-    border: 1px solid rgba(255,255,255,0.1);
-    margin-top: 15px;
 }
 
 .result-title {
@@ -142,34 +135,33 @@ header {
 }
 
 .result-confidence {
-    font-size: 18px;
     margin-top: 10px;
+    font-size: 18px;
 }
 
-/* METRIC CARD */
+/* METRIC */
 .metric-card {
     background: rgba(255,255,255,0.05);
     border: 1px solid rgba(255,255,255,0.08);
-    padding: 18px;
     border-radius: 20px;
+    padding: 20px;
     text-align: center;
     margin-top: 18px;
 }
 
-.metric-title {
+.metric-label {
     color: #CBD5E1;
     font-size: 15px;
-    margin-bottom: 8px;
 }
 
 .metric-value {
-    font-size: 32px;
+    font-size: 30px;
     font-weight: 700;
-    color: white;
+    margin-top: 8px;
 }
 
 /* FOOTER */
-.footer {
+.footer-text {
     text-align: center;
     color: #94A3B8;
     margin-top: 40px;
@@ -230,7 +222,7 @@ with left_col:
     st.subheader("📤 Upload Image")
 
     uploaded_file = st.file_uploader(
-        "Upload",
+        "Upload Image",
         type=["jpg", "jpeg", "png"],
         label_visibility="collapsed"
     )
@@ -286,9 +278,7 @@ with right_col:
             # =========================================
             img = image.resize((128, 128))
 
-            img_array = np.array(
-                img
-            ).astype(np.float32)
+            img_array = np.array(img).astype(np.float32)
 
             img_array = img_array / 255.0
 
@@ -311,13 +301,13 @@ with right_col:
             )[0].numpy()[0][0]
 
             # =========================================
-            # REAL IMAGE
+            # REAL
             # =========================================
             if pred > 0.5:
 
                 confidence = float(pred * 100)
 
-                html_code = f"""
+                real_html = f"""
                 <div class="real-box">
 
                     <div class="result-title">
@@ -332,7 +322,7 @@ with right_col:
                 """
 
                 st.markdown(
-                    html_code,
+                    real_html,
                     unsafe_allow_html=True
                 )
 
@@ -344,7 +334,7 @@ with right_col:
                         f"""
                         <div class="metric-card">
 
-                            <div class="metric-title">
+                            <div class="metric-label">
                                 Authenticity
                             </div>
 
@@ -363,7 +353,7 @@ with right_col:
                         """
                         <div class="metric-card">
 
-                            <div class="metric-title">
+                            <div class="metric-label">
                                 Status
                             </div>
 
@@ -376,10 +366,8 @@ with right_col:
                         unsafe_allow_html=True
                     )
 
-                st.balloons()
-
             # =========================================
-            # FAKE IMAGE
+            # FAKE
             # =========================================
             else:
 
@@ -387,7 +375,7 @@ with right_col:
                     (1 - pred) * 100
                 )
 
-                html_code = f"""
+                fake_html = f"""
                 <div class="fake-box">
 
                     <div class="result-title">
@@ -402,7 +390,7 @@ with right_col:
                 """
 
                 st.markdown(
-                    html_code,
+                    fake_html,
                     unsafe_allow_html=True
                 )
 
@@ -414,7 +402,7 @@ with right_col:
                         f"""
                         <div class="metric-card">
 
-                            <div class="metric-title">
+                            <div class="metric-label">
                                 Manipulation Risk
                             </div>
 
@@ -433,7 +421,7 @@ with right_col:
                         """
                         <div class="metric-card">
 
-                            <div class="metric-title">
+                            <div class="metric-label">
                                 Status
                             </div>
 
@@ -461,7 +449,7 @@ with right_col:
 # FOOTER
 # =========================================
 st.markdown("""
-<div class="footer">
+<div class="footer-text">
     Deepfake Detection System • TensorFlow • Streamlit
 </div>
 """, unsafe_allow_html=True)
