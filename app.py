@@ -8,7 +8,7 @@ import time
 # PAGE CONFIG
 # =========================================
 st.set_page_config(
-    page_title="VisionGuard AI",
+    page_title="deepfake detection salim finpro ",
     page_icon="🛡️",
     layout="wide"
 )
