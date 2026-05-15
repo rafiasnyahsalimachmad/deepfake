@@ -239,22 +239,7 @@ with right_col:
 
                 confidence = float(pred * 100)
 
-                st.markdown(
-                    f"""
-                    <div class="real-box">
-
-                        <div class="result-title">
-                            ✅ REAL IMAGE
-                        </div>
-
-                        <div class="result-confidence">
-                            Confidence: {confidence:.2f}%
-                        </div>
-
-                    </div>
-                    """,
-                    unsafe_allow_html=True
-                )
+                
 
                 c1, c2 = st.columns(2)
 
