@@ -4,18 +4,18 @@ import numpy as np
 from PIL import Image
 import time
 
-# =========================================
+# =====================================================
 # PAGE CONFIG
-# =========================================
+# =====================================================
 st.set_page_config(
     page_title="VisionGuard AI",
     page_icon="🛡️",
     layout="wide"
 )
 
-# =========================================
+# =====================================================
 # CUSTOM CSS
-# =========================================
+# =====================================================
 st.markdown("""
 <style>
 
@@ -81,7 +81,7 @@ html, body, [class*="css"] {
     box-shadow: 0 0 25px rgba(139,92,246,0.5);
 }
 
-/* RESULT */
+/* RESULT BOX */
 .real-box {
     background: linear-gradient(135deg,#00C853,#64DD17);
     padding: 28px;
@@ -89,6 +89,7 @@ html, body, [class*="css"] {
     text-align: center;
     color: white;
     box-shadow: 0 0 25px rgba(0,255,120,0.35);
+    margin-top: 15px;
 }
 
 .fake-box {
@@ -98,6 +99,7 @@ html, body, [class*="css"] {
     text-align: center;
     color: white;
     box-shadow: 0 0 25px rgba(255,80,80,0.35);
+    margin-top: 15px;
 }
 
 .result-title {
@@ -106,8 +108,8 @@ html, body, [class*="css"] {
 }
 
 .result-confidence {
-    font-size: 20px;
-    margin-top: 10px;
+    font-size: 22px;
+    margin-top: 12px;
 }
 
 /* METRIC */
@@ -130,9 +132,9 @@ html, body, [class*="css"] {
 </style>
 """, unsafe_allow_html=True)
 
-# =========================================
+# =====================================================
 # LOAD MODEL
-# =========================================
+# =====================================================
 @st.cache_resource
 def load_model():
     model = tf.saved_model.load("deepfake_savedmodel")
@@ -141,26 +143,26 @@ def load_model():
 model = load_model()
 infer = model.signatures["serving_default"]
 
-# =========================================
+# =====================================================
 # HEADER
-# =========================================
+# =====================================================
 st.markdown("""
 <div class="header-box">
     <div class="main-title">🛡️ VisionGuard AI</div>
     <div class="sub-title">
-        Deepfake detection system powered by convolutional neural networks
+        Deepfake detection system powered by CNN Deep Learning
     </div>
 </div>
 """, unsafe_allow_html=True)
 
-# =========================================
+# =====================================================
 # LAYOUT
-# =========================================
-left_col, right_col = st.columns([1.05, 1])
+# =====================================================
+left_col, right_col = st.columns([1.1, 1])
 
-# =========================================
+# =====================================================
 # LEFT PANEL
-# =========================================
+# =====================================================
 with left_col:
 
     st.markdown('<div class="card">', unsafe_allow_html=True)
@@ -184,30 +186,33 @@ with left_col:
 
     st.markdown('</div>', unsafe_allow_html=True)
 
-# =========================================
+# =====================================================
 # RIGHT PANEL
-# =========================================
+# =====================================================
 with right_col:
 
     st.markdown('<div class="card">', unsafe_allow_html=True)
 
     st.subheader("🔍 AI Detection Panel")
 
-    st.write("Analyze whether the uploaded image is authentic or manipulated.")
+    st.write(
+        "Analyze whether the uploaded image is authentic or manipulated."
+    )
 
     if uploaded_file is not None:
 
         if st.button("Analyze Image"):
 
+            # loading animation
             progress = st.progress(0)
 
             for i in range(100):
                 time.sleep(0.01)
                 progress.progress(i + 1)
 
-            # =========================================
+            # =====================================================
             # PREPROCESS
-            # =========================================
+            # =====================================================
             img = image.resize((128,128))
 
             img_array = np.array(img).astype(np.float32)
@@ -221,18 +226,16 @@ with right_col:
 
             input_tensor = tf.convert_to_tensor(img_array)
 
-            # =========================================
-            # INFERENCE
-            # =========================================
+            # =====================================================
+            # PREDICT
+            # =====================================================
             output = infer(input_tensor)
 
-            pred = list(
-                output.values()
-            )[0].numpy()[0][0]
+            pred = list(output.values())[0].numpy()[0][0]
 
-            # =========================================
-            # RESULT REAL
-            # =========================================
+            # =====================================================
+            # REAL IMAGE
+            # =====================================================
             if pred > 0.5:
 
                 confidence = float(pred * 100)
@@ -240,6 +243,7 @@ with right_col:
                 st.markdown(
                     f"""
                     <div class="real-box">
+
                         <div class="result-title">
                             ✅ REAL IMAGE
                         </div>
@@ -247,6 +251,7 @@ with right_col:
                         <div class="result-confidence">
                             Confidence: {confidence:.2f}%
                         </div>
+
                     </div>
                     """,
                     unsafe_allow_html=True
@@ -255,6 +260,7 @@ with right_col:
                 c1, c2 = st.columns(2)
 
                 with c1:
+
                     st.markdown(
                         f"""
                         <div class="metric-card">
@@ -266,6 +272,7 @@ with right_col:
                     )
 
                 with c2:
+
                     st.markdown(
                         """
                         <div class="metric-card">
@@ -278,16 +285,17 @@ with right_col:
 
                 st.balloons()
 
-            # =========================================
-            # RESULT FAKE
-            # =========================================
+            # =====================================================
+            # FAKE IMAGE
+            # =====================================================
             else:
 
-                confidence = float((1-pred) * 100)
+                confidence = float((1 - pred) * 100)
 
                 st.markdown(
                     f"""
                     <div class="fake-box">
+
                         <div class="result-title">
                             ❌ FAKE IMAGE
                         </div>
@@ -295,6 +303,7 @@ with right_col:
                         <div class="result-confidence">
                             Confidence: {confidence:.2f}%
                         </div>
+
                     </div>
                     """,
                     unsafe_allow_html=True
@@ -303,6 +312,7 @@ with right_col:
                 c1, c2 = st.columns(2)
 
                 with c1:
+
                     st.markdown(
                         f"""
                         <div class="metric-card">
@@ -314,6 +324,7 @@ with right_col:
                     )
 
                 with c2:
+
                     st.markdown(
                         """
                         <div class="metric-card">
@@ -330,9 +341,9 @@ with right_col:
 
     st.markdown('</div>', unsafe_allow_html=True)
 
-# =========================================
+# =====================================================
 # FOOTER
-# =========================================
+# =====================================================
 st.markdown("""
 <div class="footer">
     VisionGuard AI • TensorFlow • Streamlit
