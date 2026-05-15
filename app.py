@@ -146,7 +146,7 @@ infer = model.signatures["serving_default"]
 # =========================================
 st.markdown("""
 <div class="header-box">
-    <div class="main-title">🛡️ VisionGuard AI</div>
+    <div class="main-title">🛡️ deepfake detection salim finpro vtech</div>
     <div class="sub-title">
         Deepfake detection system powered by convolutional neural networks
     </div>
