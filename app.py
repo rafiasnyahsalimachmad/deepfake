@@ -2,147 +2,260 @@ import streamlit as st
 import tensorflow as tf
 import numpy as np
 from PIL import Image
+import time
 
-# =========================
+# ====================================
 # PAGE CONFIG
-# =========================
+# ====================================
 st.set_page_config(
-    page_title="Deepfake Detector",
-    page_icon="🕵️",
+    page_title="Deepfake Vision AI",
+    page_icon="🎭",
     layout="centered"
 )
 
-# =========================
+# ====================================
 # CUSTOM CSS
-# =========================
+# ====================================
 st.markdown("""
 <style>
-.main {
-    background-color: #0E1117;
+
+.stApp {
+    background: linear-gradient(135deg, #141E30, #243B55);
+    color: white;
 }
 
 .title {
     text-align: center;
-    font-size: 45px;
-    font-weight: bold;
-    color: white;
+    font-size: 52px;
+    font-weight: 800;
+    background: linear-gradient(to right, #00F5A0, #00D9F5, #A855F7);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 10px;
 }
 
 .subtitle {
     text-align: center;
-    color: #A0A0A0;
+    color: #D1D5DB;
+    font-size: 18px;
     margin-bottom: 30px;
 }
 
-.result-real {
-    padding: 15px;
-    border-radius: 12px;
-    background-color: rgba(0,255,100,0.15);
-    color: #00FF88;
-    font-size: 24px;
-    font-weight: bold;
-    text-align: center;
+.upload-box {
+    padding: 20px;
+    border-radius: 20px;
+    background: rgba(255,255,255,0.08);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.15);
 }
 
-.result-fake {
-    padding: 15px;
-    border-radius: 12px;
-    background-color: rgba(255,0,80,0.15);
-    color: #FF4B6E;
-    font-size: 24px;
-    font-weight: bold;
+.real-box {
+    padding: 25px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, #00C853, #64DD17);
+    color: white;
     text-align: center;
+    font-size: 28px;
+    font-weight: bold;
+    animation: fadeIn 0.8s ease;
 }
+
+.fake-box {
+    padding: 25px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, #FF1744, #FF9100);
+    color: white;
+    text-align: center;
+    font-size: 28px;
+    font-weight: bold;
+    animation: fadeIn 0.8s ease;
+}
+
+.metric-box {
+    padding: 15px;
+    border-radius: 15px;
+    background: rgba(255,255,255,0.08);
+    text-align: center;
+    margin-top: 15px;
+}
+
+.footer {
+    text-align: center;
+    color: #B0B0B0;
+    margin-top: 50px;
+    font-size: 14px;
+}
+
+@keyframes fadeIn {
+    from {opacity:0; transform: translateY(10px);}
+    to {opacity:1; transform: translateY(0);}
+}
+
 </style>
 """, unsafe_allow_html=True)
 
-# =========================
+# ====================================
 # LOAD MODEL
-# =========================
-model = tf.saved_model.load("deepfake_savedmodel")
+# ====================================
+@st.cache_resource
+def load_model():
+    model = tf.saved_model.load("deepfake_savedmodel")
+    return model
+
+model = load_model()
 infer = model.signatures["serving_default"]
 
-# =========================
+# ====================================
 # HEADER
-# =========================
-st.markdown('<p class="title">🕵️ Deepfake Detector</p>', unsafe_allow_html=True)
+# ====================================
+st.markdown('<div class="title">🎭 Deepfake Vision AI</div>', unsafe_allow_html=True)
 
 st.markdown(
-    '<p class="subtitle">Upload an image and let AI detect whether it is REAL or FAKE</p>',
+    '<div class="subtitle">Advanced AI system for detecting manipulated images</div>',
     unsafe_allow_html=True
 )
 
-# =========================
-# FILE UPLOADER
-# =========================
+# ====================================
+# UPLOADER
+# ====================================
+st.markdown('<div class="upload-box">', unsafe_allow_html=True)
+
 uploaded_file = st.file_uploader(
-    "Upload Image",
+    "📤 Upload an Image",
     type=["jpg", "jpeg", "png"]
 )
 
-# =========================
-# PREDICTION
-# =========================
+st.markdown('</div>', unsafe_allow_html=True)
+
+# ====================================
+# PROCESS IMAGE
+# ====================================
 if uploaded_file is not None:
 
     image = Image.open(uploaded_file).convert("RGB")
 
-    st.image(image, caption="Uploaded Image", use_container_width=True)
+    st.image(
+        image,
+        caption="Uploaded Image",
+        use_container_width=True
+    )
 
-    # preprocess
-    img = image.resize((224, 224))
+    if st.button("🚀 Analyze Image"):
 
-    img_array = np.array(img) / 255.0
+        with st.spinner("Analyzing image with AI..."):
 
-    img_array = np.expand_dims(img_array, axis=0).astype(np.float32)
+            time.sleep(1.5)
 
-    # predict
-    input_tensor = tf.convert_to_tensor(img_array)
+            # preprocessing
+            img = image.resize((224, 224))
 
-    output = infer(input_tensor)
+            img_array = np.array(img) / 255.0
 
-    pred = list(output.values())[0].numpy()[0][0]
+            img_array = np.expand_dims(img_array, axis=0).astype(np.float32)
 
-    st.write("### Prediction Result")
+            input_tensor = tf.convert_to_tensor(img_array)
 
-    # =========================
-    # RESULT
-    # =========================
-    if pred > 0.5:
+            # prediction
+            output = infer(input_tensor)
 
-        confidence = pred * 100
+            pred = list(output.values())[0].numpy()[0][0]
 
-        st.markdown(
-            f"""
-            <div class="result-real">
-                ✅ REAL IMAGE <br>
-                Confidence: {confidence:.2f}%
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
+            st.markdown("## 📊 Analysis Result")
 
-        st.progress(int(confidence))
+            # ====================================
+            # REAL
+            # ====================================
+            if pred > 0.5:
 
-    else:
+                confidence = float(pred * 100)
 
-        confidence = (1 - pred) * 100
+                st.markdown(
+                    f"""
+                    <div class="real-box">
+                        ✅ REAL IMAGE
+                        <br><br>
+                        Confidence: {confidence:.2f}%
+                    </div>
+                    """,
+                    unsafe_allow_html=True
+                )
 
-        st.markdown(
-            f"""
-            <div class="result-fake">
-                ❌ FAKE IMAGE <br>
-                Confidence: {confidence:.2f}%
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
+                st.progress(int(confidence))
 
-        st.progress(int(confidence))
+                col1, col2 = st.columns(2)
 
-# =========================
+                with col1:
+                    st.markdown(
+                        f"""
+                        <div class="metric-box">
+                        <h3>Authenticity</h3>
+                        <h2>{confidence:.1f}%</h2>
+                        </div>
+                        """,
+                        unsafe_allow_html=True
+                    )
+
+                with col2:
+                    st.markdown(
+                        """
+                        <div class="metric-box">
+                        <h3>Status</h3>
+                        <h2>REAL</h2>
+                        </div>
+                        """,
+                        unsafe_allow_html=True
+                    )
+
+                st.balloons()
+
+            # ====================================
+            # FAKE
+            # ====================================
+            else:
+
+                confidence = float((1 - pred) * 100)
+
+                st.markdown(
+                    f"""
+                    <div class="fake-box">
+                        ❌ FAKE IMAGE
+                        <br><br>
+                        Confidence: {confidence:.2f}%
+                    </div>
+                    """,
+                    unsafe_allow_html=True
+                )
+
+                st.progress(int(confidence))
+
+                col1, col2 = st.columns(2)
+
+                with col1:
+                    st.markdown(
+                        f"""
+                        <div class="metric-box">
+                        <h3>Manipulation Risk</h3>
+                        <h2>{confidence:.1f}%</h2>
+                        </div>
+                        """,
+                        unsafe_allow_html=True
+                    )
+
+                with col2:
+                    st.markdown(
+                        """
+                        <div class="metric-box">
+                        <h3>Status</h3>
+                        <h2>FAKE</h2>
+                        </div>
+                        """,
+                        unsafe_allow_html=True
+                    )
+
+# ====================================
 # FOOTER
-# =========================
-st.markdown("---")
-
-st.caption("Built with TensorFlow & Streamlit")
+# ====================================
+st.markdown(
+    '<div class="footer">Built using TensorFlow • Streamlit • Deep Learning</div>',
+    unsafe_allow_html=True
+)
