@@ -8,7 +8,7 @@ import time
 # PAGE CONFIG
 # =========================================
 st.set_page_config(
-    page_title="deepfake detection salim finpro ",
+    page_title="Deepfake Detection",
     page_icon="🛡️",
     layout="wide"
 )
@@ -26,27 +26,50 @@ html, body, [class*="css"] {
 }
 
 .stApp {
-    background: linear-gradient(135deg,#0F172A,#111827,#1E293B);
+    background: linear-gradient(
+        135deg,
+        #0F172A,
+        #111827,
+        #1E293B
+    );
     color: white;
+}
+
+/* HIDE STREAMLIT STYLE */
+#MainMenu {
+    visibility: hidden;
+}
+
+footer {
+    visibility: hidden;
+}
+
+header {
+    visibility: hidden;
 }
 
 /* HEADER */
 .header-box {
     padding: 35px;
     border-radius: 28px;
-    background: rgba(255,255,255,0.06);
+    background: rgba(255,255,255,0.05);
     border: 1px solid rgba(255,255,255,0.08);
     backdrop-filter: blur(16px);
     margin-bottom: 25px;
 }
 
 .main-title {
-    font-size: 62px;
+    font-size: 54px;
     font-weight: 700;
-    background: linear-gradient(to right,#38BDF8,#818CF8,#C084FC);
+    background: linear-gradient(
+        to right,
+        #38BDF8,
+        #818CF8,
+        #C084FC
+    );
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    margin-bottom: 5px;
+    margin-bottom: 8px;
 }
 
 .sub-title {
@@ -56,48 +79,61 @@ html, body, [class*="css"] {
 
 /* CARD */
 .card {
-    background: rgba(255,255,255,0.06);
+    background: rgba(255,255,255,0.05);
     border: 1px solid rgba(255,255,255,0.08);
     border-radius: 28px;
-    padding: 25px;
+    padding: 24px;
     backdrop-filter: blur(14px);
 }
 
 /* BUTTON */
 .stButton > button {
     width: 100%;
-    height: 58px;
+    height: 56px;
     border-radius: 18px;
     border: none;
-    background: linear-gradient(to right,#3B82F6,#8B5CF6);
+    background: linear-gradient(
+        to right,
+        #3B82F6,
+        #8B5CF6
+    );
     color: white;
-    font-size: 18px;
+    font-size: 17px;
     font-weight: 600;
-    transition: 0.3s;
+    transition: 0.3s ease;
 }
 
 .stButton > button:hover {
-    transform: scale(1.02);
-    box-shadow: 0 0 25px rgba(139,92,246,0.5);
+    transform: scale(1.01);
 }
 
-/* RESULT */
+/* RESULT BOX */
 .real-box {
-    background: linear-gradient(135deg,#00C853,#64DD17);
-    padding: 28px;
+    background: linear-gradient(
+        135deg,
+        #16A34A,
+        #22C55E
+    );
+    padding: 26px;
     border-radius: 24px;
     text-align: center;
     color: white;
-    box-shadow: 0 0 25px rgba(0,255,120,0.35);
+    border: 1px solid rgba(255,255,255,0.1);
+    margin-top: 15px;
 }
 
 .fake-box {
-    background: linear-gradient(135deg,#FF1744,#FF9100);
-    padding: 28px;
+    background: linear-gradient(
+        135deg,
+        #DC2626,
+        #F97316
+    );
+    padding: 26px;
     border-radius: 24px;
     text-align: center;
     color: white;
-    box-shadow: 0 0 25px rgba(255,80,80,0.35);
+    border: 1px solid rgba(255,255,255,0.1);
+    margin-top: 15px;
 }
 
 .result-title {
@@ -106,24 +142,37 @@ html, body, [class*="css"] {
 }
 
 .result-confidence {
-    font-size: 20px;
+    font-size: 18px;
     margin-top: 10px;
 }
 
-/* METRIC */
+/* METRIC CARD */
 .metric-card {
-    background: rgba(255,255,255,0.06);
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.08);
     padding: 18px;
     border-radius: 20px;
     text-align: center;
-    margin-top: 15px;
+    margin-top: 18px;
+}
+
+.metric-title {
+    color: #CBD5E1;
+    font-size: 15px;
+    margin-bottom: 8px;
+}
+
+.metric-value {
+    font-size: 32px;
+    font-weight: 700;
+    color: white;
 }
 
 /* FOOTER */
 .footer {
     text-align: center;
     color: #94A3B8;
-    margin-top: 50px;
+    margin-top: 40px;
     font-size: 14px;
 }
 
@@ -135,10 +184,15 @@ html, body, [class*="css"] {
 # =========================================
 @st.cache_resource
 def load_model():
-    model = tf.saved_model.load("deepfake_savedmodel")
+
+    model = tf.saved_model.load(
+        "deepfake_savedmodel"
+    )
+
     return model
 
 model = load_model()
+
 infer = model.signatures["serving_default"]
 
 # =========================================
@@ -146,10 +200,15 @@ infer = model.signatures["serving_default"]
 # =========================================
 st.markdown("""
 <div class="header-box">
-    <div class="main-title">🛡️ deepfake detection salim finpro vtech</div>
-    <div class="sub-title">
-        Deepfake detection system powered by convolutional neural networks
+
+    <div class="main-title">
+        🛡️ Deepfake Detection AI
     </div>
+
+    <div class="sub-title">
+        AI-powered image authenticity verification system
+    </div>
+
 </div>
 """, unsafe_allow_html=True)
 
@@ -163,33 +222,46 @@ left_col, right_col = st.columns([1.05, 1])
 # =========================================
 with left_col:
 
-    st.markdown('<div class="card">', unsafe_allow_html=True)
+    st.markdown(
+        '<div class="card">',
+        unsafe_allow_html=True
+    )
 
     st.subheader("📤 Upload Image")
 
     uploaded_file = st.file_uploader(
-        "Choose image",
+        "Upload",
         type=["jpg", "jpeg", "png"],
         label_visibility="collapsed"
     )
 
+    image = None
+
     if uploaded_file is not None:
 
-        image = Image.open(uploaded_file).convert("RGB")
+        image = Image.open(
+            uploaded_file
+        ).convert("RGB")
 
         st.image(
             image,
             use_container_width=True
         )
 
-    st.markdown('</div>', unsafe_allow_html=True)
+    st.markdown(
+        '</div>',
+        unsafe_allow_html=True
+    )
 
 # =========================================
 # RIGHT PANEL
 # =========================================
 with right_col:
 
-    st.markdown('<div class="card">', unsafe_allow_html=True)
+    st.markdown(
+        '<div class="card">',
+        unsafe_allow_html=True
+    )
 
     st.subheader("🔍 AI Detection Panel")
 
@@ -204,15 +276,19 @@ with right_col:
             progress = st.progress(0)
 
             for i in range(100):
+
                 time.sleep(0.01)
+
                 progress.progress(i + 1)
 
             # =========================================
             # PREPROCESS
             # =========================================
-            img = image.resize((128,128))
+            img = image.resize((128, 128))
 
-            img_array = np.array(img).astype(np.float32)
+            img_array = np.array(
+                img
+            ).astype(np.float32)
 
             img_array = img_array / 255.0
 
@@ -221,7 +297,9 @@ with right_col:
                 axis=0
             )
 
-            input_tensor = tf.convert_to_tensor(img_array)
+            input_tensor = tf.convert_to_tensor(
+                img_array
+            )
 
             # =========================================
             # PREDICTION
@@ -233,26 +311,28 @@ with right_col:
             )[0].numpy()[0][0]
 
             # =========================================
-            # REAL
+            # REAL IMAGE
             # =========================================
             if pred > 0.5:
 
                 confidence = float(pred * 100)
 
-                st.markdown(
-                    f"""
-                    <div class="real-box">
+                html_code = f"""
+                <div class="real-box">
 
-                        <div class="result-title">
-                            ✅ REAL IMAGE
-                        </div>
-
-                        <div class="result-confidence">
-                            Confidence: {confidence:.2f}%
-                        </div>
-
+                    <div class="result-title">
+                        ✅ REAL IMAGE
                     </div>
-                    """,
+
+                    <div class="result-confidence">
+                        Confidence: {confidence:.2f}%
+                    </div>
+
+                </div>
+                """
+
+                st.markdown(
+                    html_code,
                     unsafe_allow_html=True
                 )
 
@@ -263,8 +343,15 @@ with right_col:
                     st.markdown(
                         f"""
                         <div class="metric-card">
-                            <h4>Authenticity</h4>
-                            <h2>{confidence:.1f}%</h2>
+
+                            <div class="metric-title">
+                                Authenticity
+                            </div>
+
+                            <div class="metric-value">
+                                {confidence:.1f}%
+                            </div>
+
                         </div>
                         """,
                         unsafe_allow_html=True
@@ -275,8 +362,15 @@ with right_col:
                     st.markdown(
                         """
                         <div class="metric-card">
-                            <h4>Status</h4>
-                            <h2>REAL</h2>
+
+                            <div class="metric-title">
+                                Status
+                            </div>
+
+                            <div class="metric-value">
+                                REAL
+                            </div>
+
                         </div>
                         """,
                         unsafe_allow_html=True
@@ -285,26 +379,30 @@ with right_col:
                 st.balloons()
 
             # =========================================
-            # FAKE
+            # FAKE IMAGE
             # =========================================
             else:
 
-                confidence = float((1-pred) * 100)
+                confidence = float(
+                    (1 - pred) * 100
+                )
+
+                html_code = f"""
+                <div class="fake-box">
+
+                    <div class="result-title">
+                        ❌ FAKE IMAGE
+                    </div>
+
+                    <div class="result-confidence">
+                        Confidence: {confidence:.2f}%
+                    </div>
+
+                </div>
+                """
 
                 st.markdown(
-                    f"""
-                    <div class="fake-box">
-
-                        <div class="result-title">
-                            ❌ FAKE IMAGE
-                        </div>
-
-                        <div class="result-confidence">
-                            Confidence: {confidence:.2f}%
-                        </div>
-
-                    </div>
-                    """,
+                    html_code,
                     unsafe_allow_html=True
                 )
 
@@ -315,8 +413,15 @@ with right_col:
                     st.markdown(
                         f"""
                         <div class="metric-card">
-                            <h4>Manipulation Risk</h4>
-                            <h2>{confidence:.1f}%</h2>
+
+                            <div class="metric-title">
+                                Manipulation Risk
+                            </div>
+
+                            <div class="metric-value">
+                                {confidence:.1f}%
+                            </div>
+
                         </div>
                         """,
                         unsafe_allow_html=True
@@ -327,8 +432,15 @@ with right_col:
                     st.markdown(
                         """
                         <div class="metric-card">
-                            <h4>Status</h4>
-                            <h2>FAKE</h2>
+
+                            <div class="metric-title">
+                                Status
+                            </div>
+
+                            <div class="metric-value">
+                                FAKE
+                            </div>
+
                         </div>
                         """,
                         unsafe_allow_html=True
@@ -336,15 +448,20 @@ with right_col:
 
     else:
 
-        st.info("Upload an image to begin analysis.")
+        st.info(
+            "Upload an image to begin analysis."
+        )
 
-    st.markdown('</div>', unsafe_allow_html=True)
+    st.markdown(
+        '</div>',
+        unsafe_allow_html=True
+    )
 
 # =========================================
 # FOOTER
 # =========================================
 st.markdown("""
 <div class="footer">
-    VisionGuard AI • TensorFlow • Streamlit
+    Deepfake Detection System • TensorFlow • Streamlit
 </div>
 """, unsafe_allow_html=True)
